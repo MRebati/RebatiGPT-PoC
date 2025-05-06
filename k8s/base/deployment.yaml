@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: novin-yar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: novin-yar
+  template:
+    metadata:
+      labels:
+        app: novin-yar
+    spec:
+      containers:
+      - name: novin-yar
+        image: novin-yar:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: OLLAMA_HOST
+          value: ollama
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: novin-yar
+spec:
+  selector:
+    app: novin-yar
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: ClusterIP 
