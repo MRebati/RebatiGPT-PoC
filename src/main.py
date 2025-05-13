@@ -4,10 +4,32 @@ import chainlit as cl
 import litellm
 import mimetypes
 import os
+import json
+from difflib import SequenceMatcher
 
 def is_image_file(file_path):
     mime_type, _ = mimetypes.guess_type(file_path)
     return mime_type and mime_type.startswith('image/')
+
+def load_faqs():
+    try:
+        with open('faqs.json', 'r', encoding='utf-8') as f:
+            return json.load(f)['faqs']
+    except Exception as e:
+        print(f"Error loading FAQs: {str(e)}")
+        return []
+
+def find_best_match(question, faqs, threshold=0.6):
+    best_match = None
+    best_score = 0
+    
+    for faq in faqs:
+        score = SequenceMatcher(None, question.lower(), faq['question'].lower()).ratio()
+        if score > best_score and score > threshold:
+            best_score = score
+            best_match = faq
+    
+    return best_match
 
 @cl.on_chat_start
 def start_chat():
@@ -17,7 +39,7 @@ def start_chat():
     }
 
     cl.user_session.set("message_history", [system_message])
-
+    cl.user_session.set("faqs", load_faqs())
 
 @cl.on_message
 async def on_message(message: cl.Message):
@@ -30,6 +52,14 @@ async def on_message(message: cl.Message):
     }
 
     messages = cl.user_session.get("message_history")
+    faqs = cl.user_session.get("faqs")
+
+    # Check if the message matches any FAQ
+    faq_match = find_best_match(message.content, faqs)
+    if faq_match:
+        await msg.stream_token(faq_match['answer'])
+        await msg.update()
+        return
 
     if len(message.elements) > 0:
         for element in message.elements:
