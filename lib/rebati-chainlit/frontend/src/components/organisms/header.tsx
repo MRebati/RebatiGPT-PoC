@@ -16,7 +16,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { RegularButton } from 'components/atoms/buttons';
 import UserButton from 'components/atoms/buttons/userButton';
-import { Logo } from 'components/atoms/logo';
 import { Translator } from 'components/i18n';
 import NewChatButton from 'components/molecules/newChatButton';
 
@@ -159,7 +158,6 @@ const Header = memo(
           }}
         >
           <Stack alignItems="center" direction={'row'} gap={!matches ? 3 : 0}>
-            {!matches ? <Logo style={{ maxHeight: '25px' }} /> : null}
             <Nav
               matches={matches}
               dataPersistence={projectSettings?.dataPersistence}
