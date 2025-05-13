@@ -147,23 +147,8 @@ async def on_message(message: cl.Message):
     # Check if the message matches any FAQ, using chat history for context
     faq_match = find_best_match(message.content, faqs, messages)
     if faq_match:
-        # Add context about the category and tags to help the model provide a slightly varied response
-        context = f"Category: {faq_match['category']}\nTags: {', '.join(faq_match['tags'])}\n\n"
-        messages.append({"role": "system", "content": context})
-        messages.append({"role": "user", "content": message.content})
-        
-        response = await litellm.acompletion(
-            model="ollama/" + os.getenv("OLLAMA_MODEL", "hf.co/modashtizade/DeepSeek-R1-Distill-Llama-8B-Persian:Q4_K_M"),
-            messages=messages,
-            api_base="http://ollama:11434",
-            stream=True
-        )
-
-        async for chunk in response:
-            if chunk:
-                content = chunk.choices[0].delta.content
-                if content and not content.startswith("<think>"):
-                    await msg.stream_token(content)
+        # Return the exact FAQ answer
+        await msg.stream_token(faq_match['answer'])
         await msg.update()
         return
 
