@@ -15,7 +15,6 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { RegularButton } from 'components/atoms/buttons';
-import GithubButton from 'components/atoms/buttons/githubButton';
 import UserButton from 'components/atoms/buttons/userButton';
 import { Logo } from 'components/atoms/logo';
 import { Translator } from 'components/i18n';
@@ -176,7 +175,6 @@ const Header = memo(
           >
             <NewChatButton />
             <Box ml={1} />
-            <GithubButton href={projectSettings?.ui?.github} />
             <UserButton />
           </Stack>
         </Toolbar>
