@@ -181,7 +181,7 @@ async def on_message(message: cl.Message):
 
     messages.append({"role": "user", "content": message.content})
     response = await litellm.acompletion(
-        model="ollama/" + os.getenv("OLLAMA_MODEL", "gemma"),
+        model="ollama/" + os.getenv("OLLAMA_MODEL", "gemma2"),
         messages=messages,
         api_base="http://ollama:11434",
         stream=True
